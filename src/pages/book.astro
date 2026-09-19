@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Book an Appointment | Beam Hair Salon">
+	<section class="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-3xl flex-col items-center px-6 py-20 text-center sm:px-10 sm:py-28">
+		<h1 class="font-heading text-5xl text-brand-green sm:text-7xl">Book an appointment</h1>
+		<p class="mt-5 max-w-xl font-body text-base leading-relaxed sm:text-lg">
+			Choose a service and find a time that works for you through our Square booking page.
+		</p>
+
+		<div class="mt-10 min-h-12 font-body">
+			<script
+				is:inline
+				src="https://square.site/appointments/buyer/widget/zdtl5wv9ac3ju2/LG3V4VE8FP7T5.js"
+			></script>
+		</div>
+
+		<noscript>
+			<p class="mt-8 font-body">Please enable JavaScript to book an appointment.</p>
+		</noscript>
+	</section>
+</Layout>

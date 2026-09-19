@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+import annlynPortrait from '../assets/images/babe_mug.jpg';
+import brittneyPortrait from '../assets/images/brittney_mug.jpg';
+import jordanPortrait from '../assets/images/jordan_mug.jpg';
+import victorPortrait from '../assets/images/victor_mug.jpg';
+import jenniferPortrait from '../assets/images/jen_mug.jpg';
+import openChairPortrait from '../assets/images/babe_mug_2.jpg';
+
+const team = [
+	{
+		name: 'Annlyn',
+		role: 'Owner / Lead Stylist',
+		details: 'Services: color, extensions',
+		cta: 'Book',
+		image: annlynPortrait,
+		alt: 'Portrait of Annlyn',
+		position: 'object-center',
+	},
+	{
+		name: 'Brittney',
+		role: 'Stylist',
+		details: 'Services: haircuts, color',
+		cta: 'Book',
+		image: brittneyPortrait,
+		alt: 'Portrait of Brittney',
+		position: 'object-center',
+	},
+	{
+		name: 'Jordan',
+		role: 'Stylist',
+		details: 'Services: haircuts, color, extensions, makeup',
+		cta: 'Book',
+		image: jordanPortrait,
+		alt: 'Portrait of Jordan',
+		position: 'object-center',
+	},
+	{
+		name: 'Victor',
+		role: "Independent Men's Stylist",
+		details: "Services: men's grooming",
+		cta: 'Book',
+		image: victorPortrait,
+		alt: 'Portrait of Victor',
+		position: 'object-center',
+	},
+	{
+		name: 'Jennifer',
+		role: 'Esthetician — Dream Skin Sun Valley',
+		details:
+			'Transforming the space into a relaxing, dreamy spa, Jen’s facial services leave your skin beaming.',
+		cta: 'Dream Skin Sun Valley',
+		image: jenniferPortrait,
+		alt: 'Portrait of Jennifer',
+		position: 'object-bottom',
+	},
+	{
+		name: 'You?',
+		role: 'Chair rental or commission',
+		details: 'Want to be a Beam BB?',
+		cta: 'Get in touch',
+		image: openChairPortrait,
+		alt: 'A prospective member of the Beam team',
+		position: 'object-center',
+	},
+];
+---
+
+<section class="bg-brand-green px-6 py-16 sm:px-10 sm:py-24 lg:px-16" aria-labelledby="fam-heading">
+	<div class="mx-auto w-full max-w-7xl">
+		<h2 id="fam-heading" class="text-center font-heading text-6xl leading-none text-brand-cream sm:text-7xl lg:text-8xl">
+			Fam
+		</h2>
+
+		<div class="mt-10 grid grid-cols-1 gap-6 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+			{
+				team.map(({ name, role, details, cta, image, alt, position }) => (
+					<article class="flex h-full flex-col overflow-hidden rounded-xl bg-brand-cream text-brand-black">
+						<div class="aspect-[4/5] w-full overflow-hidden">
+							<Image
+								src={image}
+								alt={alt}
+								class:list={['h-full w-full object-cover', position]}
+								widths={[480, 720, 960]}
+								sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+								loading="lazy"
+							/>
+						</div>
+
+						<div class="flex flex-1 flex-col p-6 sm:p-7">
+							<h3 class="font-heading text-3xl leading-none sm:text-4xl">{name}</h3>
+							<p class="font-subheading mt-3 text-sm font-bold leading-snug sm:text-base">{role}</p>
+							<p class="font-body mt-3 text-sm leading-relaxed sm:text-base">{details}</p>
+
+							<div class="mt-auto pt-7">
+								<span class="font-subheading inline-flex min-h-11 w-fit items-center justify-center rounded-full bg-brand-green px-5 py-2 text-sm font-bold text-white">
+									{cta}
+								</span>
+							</div>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
