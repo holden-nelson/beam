@@ -1,0 +1,84 @@
+---
+import { Image } from 'astro:assets';
+import colorImage from '../assets/images/menu_color.jpg';
+import cuttingImage from '../assets/images/menu_cutting.jpg';
+import extensionsImage from '../assets/images/menu_extensions.jpg';
+import serviceMenus from '../data/service-menus.json';
+import Layout from '../layouts/Layout.astro';
+
+const serviceImages = {
+	color: {
+		image: colorImage,
+		alt: 'Hair styled with dimensional color',
+	},
+	cutting: {
+		image: cuttingImage,
+		alt: 'A precision haircut styled at Beam Hair Salon',
+	},
+	extensions: {
+		image: extensionsImage,
+		alt: 'Long hair styled with extensions',
+	},
+} as const;
+
+const services = serviceMenus.map((service) => ({
+	...service,
+	...serviceImages[service.id as keyof typeof serviceImages],
+}));
+---
+
+<Layout title="Services | Beam Hair Salon" overlayHeader>
+	<section class="bg-brand-green px-6 py-16 sm:px-10 sm:py-24 lg:px-16" aria-label="Services">
+		<div class="mx-auto w-full max-w-[87.5rem]">
+			<div class="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+				{
+					services.map(({ title, intro, items, image, alt }) => (
+						<article class="overflow-hidden rounded-xl bg-brand-cream text-brand-black">
+							<div class="aspect-[4/5] w-full overflow-hidden">
+								<Image
+									src={image}
+									alt={alt}
+									class="h-full w-full object-cover object-center"
+									widths={[480, 720, 960, 1280]}
+									sizes="(min-width: 1024px) 50vw, 100vw"
+									loading="lazy"
+								/>
+							</div>
+
+							<div class="min-h-40 p-6 sm:min-h-48 sm:p-7">
+								<h2 class="font-heading text-3xl leading-none sm:text-4xl">{title}</h2>
+
+								{intro && <p class="mt-3 font-body text-sm leading-relaxed sm:text-base">{intro}</p>}
+
+								{items.length > 0 && (
+									<ul class="mt-6 divide-y divide-brand-black/25 border-y border-brand-black/25">
+										{items.map(({ name, duration, description, priceQualifier, price }) => (
+											<li class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 py-5">
+												<div class="min-w-0">
+													<p class="font-subheading text-sm font-bold leading-snug sm:text-base">
+														{name}
+														{duration && <span class="font-normal"> ({duration})</span>}
+													</p>
+													{description && (
+														<p class="mt-2 font-body text-sm leading-relaxed sm:text-base">{description}</p>
+													)}
+												</div>
+
+												<p class="whitespace-nowrap text-right font-subheading text-base font-bold leading-snug sm:text-lg">
+													{priceQualifier && (
+														<span class="mr-1 text-[0.65rem] font-medium sm:text-xs">{priceQualifier}</span>
+													)}
+													{price}
+												</p>
+											</li>
+										))}
+									</ul>
+								)}
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</div>
+	</section>
+</Layout>

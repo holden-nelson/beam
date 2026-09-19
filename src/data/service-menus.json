@@ -1,0 +1,107 @@
+[
+	{
+		"id": "color",
+		"title": "Color",
+		"intro": "All color services include a blowout.",
+		"items": [
+			{
+				"name": "ROOT RETOUCH",
+				"duration": "90 min",
+				"description": "Grey coverage with 1-2 inches of regrowth only",
+				"priceQualifier": "Starting at",
+				"price": "$150"
+			},
+			{
+				"name": "ROOT AND TONE",
+				"duration": "90 min",
+				"description": "Grey coverage with glossing pulled through mids/ends. Adds shine / cancels unwanted tones.",
+				"priceQualifier": "Starting at",
+				"price": "$210"
+			},
+			{
+				"name": "CUSTOM COLOR",
+				"duration": "2 hrs 45 min",
+				"description": "Lived-in blonding, all over color, foil work.",
+				"priceQualifier": "Starting at",
+				"price": "$230"
+			},
+			{
+				"name": "FULL BLONDING / NEW CLIENT",
+				"duration": "3 hrs 45 min",
+				"description": "Full head foil work or new client reset.",
+				"priceQualifier": "Starting at",
+				"price": "$325"
+			},
+			{
+				"name": "GLOSSING",
+				"duration": "1 hr",
+				"description": "Canceling unwanted tones. A good in-between color service.",
+				"priceQualifier": "Starting at",
+				"price": "$120"
+			},
+			{
+				"name": "ADD ON HAIRCUT",
+				"duration": null,
+				"description": "Add a long haircut onto a color service.",
+				"priceQualifier": "Starting at",
+				"price": "$75"
+			}
+		]
+	},
+	{
+		"id": "cutting",
+		"title": "Cutting",
+		"intro": "Annlyn is not taking new haircut or blowout-only clients at this time.",
+		"items": [
+			{
+				"name": "BLOWOUT",
+				"duration": "1 hr",
+				"description": null,
+				"priceQualifier": "Starting at",
+				"price": "$100"
+			},
+			{
+				"name": "LONG HAIRCUT",
+				"duration": "1 hr",
+				"description": null,
+				"priceQualifier": "Starting at",
+				"price": "$120"
+			},
+			{
+				"name": "SHORT HAIRCUT",
+				"duration": "30 min",
+				"description": null,
+				"priceQualifier": "Starting at",
+				"price": "$60"
+			},
+			{
+				"name": "MILBON TREATMENT",
+				"duration": "15 min",
+				"description": null,
+				"priceQualifier": "Starting at",
+				"price": "$75"
+			}
+		]
+	},
+	{
+		"id": "extensions",
+		"title": "Extensions",
+		"intro": "New clients require a consultation prior to any extension service.",
+		"items": [
+			{
+				"name": "WEFT INSTALL",
+				"duration": null,
+				"description": "Charged per row; hair is priced separately.",
+				"priceQualifier": null,
+				"price": "$215+"
+			},
+			{
+				"name": "KERATIN BONDS",
+				"duration": null,
+				"description": "Hair is included in the listed price.",
+				"priceQualifier": null,
+				"price": "$500+"
+			}
+		]
+	}
+]

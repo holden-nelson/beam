@@ -8,9 +8,9 @@ interface Props {
 const { overlay = false } = Astro.props;
 const pathname = Astro.url.pathname;
 const links = [
-	{ href: '/gallery', label: 'Gallery' },
 	{ href: '/services', label: 'Services' },
 	{ href: '/merch', label: 'Merch' },
+	{ href: '/gallery', label: 'Gallery' },
 ];
 ---
 
@@ -28,7 +28,10 @@ const links = [
 			href="/"
 			aria-label="Beam Hair Salon home"
 			aria-current={pathname === '/' ? 'page' : undefined}
-			class="flex min-h-10 shrink-0 items-center rounded-full px-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 sm:min-h-11 sm:px-3"
+			class:list={[
+				'flex min-h-10 shrink-0 items-center rounded-full px-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 sm:min-h-11 sm:px-3',
+				pathname === '/' && 'bg-brand-pink',
+			]}
 		>
 			<img
 				class="relative bottom-px h-auto w-11 sm:bottom-[3px] sm:w-24"
@@ -44,7 +47,10 @@ const links = [
 						<a
 							href={href}
 							aria-current={pathname === href ? 'page' : undefined}
-							class="flex min-h-10 items-center rounded-full px-1.5 text-[0.625rem] text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-3 sm:text-sm"
+							class:list={[
+								'flex min-h-10 items-center rounded-full px-1.5 text-[0.625rem] text-brand-black outline-none transition-[color,background-color,opacity] hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-3 sm:text-sm',
+								pathname === href && 'bg-brand-pink',
+							]}
 						>
 							{label}
 						</a>
