@@ -1,0 +1,116 @@
+---
+import graphic from '../assets/beam-graphic-black.svg';
+
+const tickerGroups = Array.from({ length: 2 });
+const tickerItems = Array.from({ length: 4 });
+---
+
+<footer>
+	<div class="flex items-center overflow-hidden bg-brand-pink py-8 sm:py-9 lg:py-10">
+		<p class="sr-only">BEAM, BITCH</p>
+		<div class="ticker-track flex w-max" aria-hidden="true">
+			{
+				tickerGroups.map(() => (
+					<div class="ticker-group flex shrink-0 items-center justify-around gap-8 pr-8 sm:gap-12 sm:pr-12">
+						{tickerItems.map(() => (
+							<div class="flex shrink-0 items-center gap-8 sm:gap-12">
+								<span class="relative top-[0.07em] whitespace-nowrap font-heading text-[clamp(3.5rem,8vw,7.5rem)] leading-none text-brand-black">
+									BEAM, BITCH
+								</span>
+								<img
+									src={graphic.src}
+									alt=""
+									class="h-11 w-auto sm:h-14 lg:h-16"
+								/>
+							</div>
+						))}
+					</div>
+				))
+			}
+		</div>
+	</div>
+
+	<div class="bg-brand-black px-6 py-16 text-brand-cream sm:px-10 sm:py-20 lg:px-16">
+		<div class="mx-auto grid w-full max-w-7xl gap-12 md:grid-cols-3 md:gap-10 lg:gap-16">
+			<section aria-labelledby="footer-location">
+				<h2 id="footer-location" class="font-heading text-3xl leading-none sm:text-4xl">Location</h2>
+				<div class="mt-6 space-y-5 font-body text-sm leading-relaxed sm:text-base">
+					<address class="not-italic">
+						300 N Main St #204<br />
+						Ketchum, ID 83353
+					</address>
+					<p>
+						Beam Micro Salon is located on the second floor of the Lane Mercantile Building,
+						right above Enoteca.
+					</p>
+					<p>
+						Enter through the door on Sun Valley Road and take a left at the top of the stairs.
+						Beam is the third door on the left.
+					</p>
+					<p>
+						Alternatively, if you’d prefer to take the elevator, enter through the backdoor
+						directly behind Sun Valley Real Estate, in the alleyway between Mountain West Bank
+						and the Lane Mercantile Building.
+					</p>
+					<p>There is unfortunately no dedicated client parking so please plan accordingly.</p>
+				</div>
+			</section>
+
+			<section aria-labelledby="footer-hours">
+				<h2 id="footer-hours" class="font-heading text-3xl leading-none sm:text-4xl">Hours</h2>
+				<div class="mt-6 space-y-5 font-body text-sm leading-relaxed sm:text-base">
+					<p>
+						Tuesday — Friday<br />
+						10am — 5pm
+					</p>
+					<p>
+						Saturday — Monday<br />
+						By Appointment Only
+					</p>
+				</div>
+			</section>
+
+			<section aria-labelledby="footer-contact">
+				<h2 id="footer-contact" class="font-heading text-3xl leading-none sm:text-4xl">Contact</h2>
+				<div class="mt-6 space-y-5 font-body text-sm leading-relaxed sm:text-base">
+					<p>
+						Email:
+						<a class="underline underline-offset-4 hover:no-underline" href="mailto:beamhairsv@gmail.com">
+							beamhairsv@gmail.com
+						</a>
+					</p>
+					<p>
+						Text:
+						<a class="underline underline-offset-4 hover:no-underline" href="sms:+12088212790">
+							208-821-2790
+						</a>
+					</p>
+				</div>
+			</section>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.ticker-track {
+		animation: ticker 26s linear infinite;
+		will-change: transform;
+	}
+
+	.ticker-group {
+		min-width: 100vw;
+	}
+
+	@keyframes ticker {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ticker-track {
+			animation: none;
+			transform: translateX(0);
+		}
+	}
+</style>

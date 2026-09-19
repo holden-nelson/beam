@@ -6,6 +6,9 @@ The vast majority of users will be on their mobile device. But we want the exper
 # Agent demeanor and behavior
 - Please BE SUCCINCT in your responses to me
 - Please be very terse / succinct in your comments. Do not overly comment code.
+- Keep changes local unless the user explicitly asks to publish or deploy. Do not create or connect this project to an OpenAI Sites project or any other hosting provider by default.
+- Do not open, connect to, or control a browser for previews or validation.
+- When validating rendered changes, run the Astro development server and use `curl` against its local URL instead of a browser.
 
 # Development
 
@@ -30,4 +33,3 @@ Consult these guides before working on related tasks:
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
-

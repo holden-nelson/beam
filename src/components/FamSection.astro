@@ -93,9 +93,20 @@ const team = [
 							<p class="font-body mt-3 text-sm leading-relaxed sm:text-base">{details}</p>
 
 							<div class="mt-auto pt-7">
-								<span class="font-subheading inline-flex min-h-11 w-fit items-center justify-center rounded-full bg-brand-green px-5 py-2 text-sm font-bold text-white">
-									{cta}
-								</span>
+								{cta === 'Book' ? (
+									<button
+										type="button"
+										data-booking-trigger
+										aria-label={`Book with ${name}`}
+										class="font-subheading inline-flex min-h-11 w-fit items-center justify-center rounded-full bg-brand-green px-5 py-2 text-sm font-bold text-white outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+									>
+										{cta}
+									</button>
+								) : (
+									<span class="font-subheading inline-flex min-h-11 w-fit items-center justify-center rounded-full bg-brand-green px-5 py-2 text-sm font-bold text-white">
+										{cta}
+									</span>
+								)}
 							</div>
 						</div>
 					</article>

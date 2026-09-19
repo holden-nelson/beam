@@ -52,13 +52,13 @@ const links = [
 				))
 			}
 			<li>
-				<a
-					href="/book"
-					aria-current={pathname === '/book' ? 'page' : undefined}
+				<button
+					type="button"
+					data-booking-trigger
 					class="flex min-h-10 items-center rounded-full bg-brand-green px-2 text-[0.625rem] text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-4 sm:text-sm"
 				>
 					Book
-				</a>
+				</button>
 			</li>
 		</ul>
 	</nav>

@@ -1,0 +1,101 @@
+---
+const squareBookingDocument = `
+	<!doctype html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<style>
+				html, body { margin: 0; height: 100%; overflow: hidden; background: #f9f7e8; }
+				iframe { display: block; width: 100% !important; height: 100% !important; min-height: 100% !important; border: 0 !important; }
+			</style>
+		</head>
+		<body>
+			<script src="https://square.site/appointments/buyer/widget/zdtl5wv9ac3ju2/LG3V4VE8FP7T5.js"><\/script>
+		</body>
+	</html>
+`;
+---
+
+<dialog id="booking-modal" aria-labelledby="booking-modal-title">
+	<div class="flex h-full flex-col overflow-hidden bg-brand-cream sm:rounded-2xl">
+		<header class="flex shrink-0 items-center justify-between gap-4 border-b border-brand-black/10 px-5 py-4 sm:px-7">
+			<h2 id="booking-modal-title" class="font-heading text-3xl leading-none text-brand-black sm:text-4xl">
+				Book an appointment
+			</h2>
+			<button
+				type="button"
+				data-booking-close
+				aria-label="Close booking"
+				class="font-subheading flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-green text-2xl leading-none text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+			>
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</header>
+
+		<iframe
+			title="Book an appointment with Beam Hair Salon"
+			data-booking-frame
+			data-booking-document={squareBookingDocument}
+			class="min-h-0 w-full flex-1 border-0 bg-brand-cream"
+		></iframe>
+	</div>
+</dialog>
+
+<script>
+	const dialog = document.querySelector<HTMLDialogElement>('#booking-modal');
+	const frame = dialog?.querySelector<HTMLIFrameElement>('[data-booking-frame]');
+	const closeButton = dialog?.querySelector<HTMLButtonElement>('[data-booking-close]');
+	let lastTrigger: HTMLElement | null = null;
+
+	document.querySelectorAll<HTMLElement>('[data-booking-trigger]').forEach((trigger) => {
+		trigger.addEventListener('click', () => {
+			if (!dialog || !frame) return;
+
+			lastTrigger = trigger;
+			if (!frame.srcdoc) frame.srcdoc = frame.dataset.bookingDocument ?? '';
+			dialog.showModal();
+		});
+	});
+
+	closeButton?.addEventListener('click', () => dialog?.close());
+
+	dialog?.addEventListener('click', (event) => {
+		if (event.target === dialog) dialog.close();
+	});
+
+	dialog?.addEventListener('close', () => lastTrigger?.focus());
+</script>
+
+<style>
+	:global(html:has(#booking-modal[open])),
+	:global(body:has(#booking-modal[open])) {
+		overflow: hidden;
+	}
+
+	#booking-modal {
+		width: 100%;
+		max-width: none;
+		height: 100dvh;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		overflow: hidden;
+	}
+
+	#booking-modal::backdrop {
+		background: rgb(0 0 0 / 65%);
+		backdrop-filter: blur(4px);
+	}
+
+	@media (min-width: 640px) {
+		#booking-modal {
+			width: min(94vw, 64rem);
+			height: min(90dvh, 56rem);
+			margin: auto;
+			border-radius: 1rem;
+		}
+	}
+</style>

@@ -1,5 +1,7 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BookingModal from '../components/BookingModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -21,11 +23,13 @@ const { title = 'Beam Hair Salon', overlayHeader = false } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<div class="min-h-screen bg-brand-cream text-brand-black">
+		<div class="flex min-h-screen flex-col bg-brand-cream text-brand-black">
 			<SiteHeader overlay={overlayHeader} />
-			<main>
+			<main class="flex-1">
 				<slot />
 			</main>
+			<SiteFooter />
+			<BookingModal />
 		</div>
 	</body>
 </html>
