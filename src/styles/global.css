@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@font-face {
+	font-family: "Clemora";
+	src: url("../assets/fonts/clemora-regular.otf") format("opentype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Clemora";
+	src: url("../assets/fonts/clemora-italic.otf") format("opentype");
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Gilmer";
+	src: url("../assets/fonts/gilmer-light.otf") format("opentype");
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Gilmer";
+	src: url("../assets/fonts/gilmer-regular.otf") format("opentype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Gilmer";
+	src: url("../assets/fonts/gilmer-medium.otf") format("opentype");
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Gilmer";
+	src: url("../assets/fonts/gilmer-bold.otf") format("opentype");
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Gilmer";
+	src: url("../assets/fonts/gilmer-heavy.otf") format("opentype");
+	font-style: normal;
+	font-weight: 800;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Gilmer Outline";
+	src: url("../assets/fonts/gilmer-outline.otf") format("opentype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@theme static {
+	--color-brand-green: #8a820c;
+	--color-brand-pink: #f891a6;
+	--color-brand-cream: #f9f7e8;
+	--color-brand-black: #000000;
+
+	--font-heading: "Clemora", Georgia, serif;
+	--font-subheading: "Gilmer", Arial, Helvetica, sans-serif;
+	--font-body: "Gilmer", Arial, Helvetica, sans-serif;
+	--font-outline: "Gilmer Outline", "Gilmer", Arial, Helvetica, sans-serif;
+}
+
+:root {
+	--color-page: var(--color-brand-cream);
+	--color-text: var(--color-brand-black);
+	--color-focus: var(--color-brand-black);
+}
+
+@layer base {
+	html {
+		background: var(--color-page);
+	}
+
+	body {
+		min-width: 0;
+		margin: 0;
+		background: var(--color-page);
+		color: var(--color-text);
+		font-family: Arial, Helvetica, sans-serif;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+}

@@ -1,0 +1,65 @@
+---
+import wordmark from '../assets/beam-wordmark-blackpink.svg';
+
+interface Props {
+	overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+const pathname = Astro.url.pathname;
+const links = [
+	{ href: '/gallery', label: 'Gallery' },
+	{ href: '/services', label: 'Services' },
+	{ href: '/merch', label: 'Merch' },
+];
+---
+
+<header
+	class:list={[
+		'top-3 z-50 flex w-full justify-center px-2 sm:top-5 sm:px-4',
+		overlay ? 'fixed' : 'sticky',
+	]}
+>
+	<nav
+		aria-label="Primary navigation"
+		class="font-subheading flex w-fit max-w-full items-center gap-0.5 rounded-full border border-brand-black/10 bg-brand-cream p-1 font-bold shadow-2xl sm:gap-1.5 sm:p-1.5"
+	>
+		<a
+			href="/"
+			aria-label="Beam Hair Salon home"
+			aria-current={pathname === '/' ? 'page' : undefined}
+			class="flex min-h-10 shrink-0 items-center rounded-full px-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 sm:min-h-11 sm:px-3"
+		>
+			<img
+				class="relative bottom-px h-auto w-11 sm:bottom-[3px] sm:w-24"
+				src={wordmark.src}
+				alt="Beam"
+			/>
+		</a>
+
+		<ul class="flex items-center gap-0.5 sm:gap-1">
+			{
+				links.map(({ href, label }) => (
+					<li>
+						<a
+							href={href}
+							aria-current={pathname === href ? 'page' : undefined}
+							class="flex min-h-10 items-center rounded-full px-1.5 text-[0.625rem] text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-3 sm:text-sm"
+						>
+							{label}
+						</a>
+					</li>
+				))
+			}
+			<li>
+				<a
+					href="/book"
+					aria-current={pathname === '/book' ? 'page' : undefined}
+					class="flex min-h-10 items-center rounded-full bg-brand-green px-2 text-[0.625rem] text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-4 sm:text-sm"
+				>
+					Book
+				</a>
+			</li>
+		</ul>
+	</nav>
+</header>

@@ -1,12 +1,22 @@
-## Development
+# Project Overview
+This is the website for Beam Hair Salon. It is built on Astro. The website contains information about the business, its stylists, services offered, and photos / marketing material. It embeds a square booking flow for booking, and it integrates with Square's API for e-commerce.
 
-When starting the dev server, use background mode:
+The vast majority of users will be on their mobile device. But we want the experience to be good for both mobile and desktop users.
+
+# Agent demeanor and behavior
+- Please BE SUCCINCT in your responses to me
+- Please be very terse / succinct in your comments. Do not overly comment code.
+
+# Development
+
+starting the dev server:
 
 ```
-astro dev --background
+npm run dev
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+## Styling / layout
+We'll use TailwindCSS 4 for styling / layout.
 
 ## Documentation
 
@@ -20,3 +30,4 @@ Consult these guides before working on related tasks:
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+

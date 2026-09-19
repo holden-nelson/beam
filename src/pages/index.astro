@@ -1,11 +1,31 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { Image } from 'astro:assets';
+import cowboyPicnic from '../assets/images/cowboy-picnic.jpg';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout overlayHeader>
+	<div class="mx-auto h-[75svh] w-full max-w-[3000px] overflow-hidden">
+		<Image
+			src={cowboyPicnic}
+			alt="Three women relaxing at a western-themed picnic"
+			class="h-full w-full object-cover object-center"
+			loading="eager"
+			fetchpriority="high"
+		/>
+	</div>
+
+	<div
+		class="mx-auto w-full max-w-7xl px-6 py-16 text-left font-body text-lg leading-normal text-brand-green sm:px-10 sm:py-24 sm:text-xl lg:px-16 lg:text-2xl"
+	>
+		<p>
+			We exist to serve the swanky, eclectic, and all-around rad. We strive to create a comfortable
+			atmosphere that invites creativity and self-expression. We specialize in effortless, lived-in
+			hair with the occasional mullet.
+		</p>
+
+		<p class="mt-6 sm:mt-8">
+			You’ll find us on the second floor of the oldest building in town. Come see what we’re about.
+		</p>
+	</div>
 </Layout>
