@@ -43,28 +43,30 @@ const squareBookingDocument = `
 </dialog>
 
 <script>
-	const dialog = document.querySelector<HTMLDialogElement>('#booking-modal');
-	const frame = dialog?.querySelector<HTMLIFrameElement>('[data-booking-frame]');
-	const closeButton = dialog?.querySelector<HTMLButtonElement>('[data-booking-close]');
-	let lastTrigger: HTMLElement | null = null;
+	document.addEventListener('astro:page-load', () => {
+		const dialog = document.querySelector<HTMLDialogElement>('#booking-modal');
+		const frame = dialog?.querySelector<HTMLIFrameElement>('[data-booking-frame]');
+		const closeButton = dialog?.querySelector<HTMLButtonElement>('[data-booking-close]');
+		let lastTrigger: HTMLElement | null = null;
 
-	document.querySelectorAll<HTMLElement>('[data-booking-trigger]').forEach((trigger) => {
-		trigger.addEventListener('click', () => {
-			if (!dialog || !frame) return;
+		document.querySelectorAll<HTMLElement>('[data-booking-trigger]').forEach((trigger) => {
+			trigger.addEventListener('click', () => {
+				if (!dialog || !frame) return;
 
-			lastTrigger = trigger;
-			if (!frame.srcdoc) frame.srcdoc = frame.dataset.bookingDocument ?? '';
-			dialog.showModal();
+				lastTrigger = trigger;
+				if (!frame.srcdoc) frame.srcdoc = frame.dataset.bookingDocument ?? '';
+				dialog.showModal();
+			});
 		});
+
+		closeButton?.addEventListener('click', () => dialog?.close());
+
+		dialog?.addEventListener('click', (event) => {
+			if (event.target === dialog) dialog.close();
+		});
+
+		dialog?.addEventListener('close', () => lastTrigger?.focus());
 	});
-
-	closeButton?.addEventListener('click', () => dialog?.close());
-
-	dialog?.addEventListener('click', (event) => {
-		if (event.target === dialog) dialog.close();
-	});
-
-	dialog?.addEventListener('close', () => lastTrigger?.focus());
 </script>
 
 <style>

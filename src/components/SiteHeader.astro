@@ -15,6 +15,8 @@ const links = [
 ---
 
 <header
+	transition:name="site-header"
+	transition:animate="none"
 	class:list={[
 		'top-3 z-50 flex w-full justify-center px-2 sm:top-5 sm:px-4',
 		overlay ? 'fixed' : 'sticky',
@@ -28,13 +30,19 @@ const links = [
 			href="/"
 			aria-label="Beam Hair Salon home"
 			aria-current={pathname === '/' ? 'page' : undefined}
-			class:list={[
-				'flex min-h-10 shrink-0 items-center rounded-full px-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 sm:min-h-11 sm:px-3',
-				pathname === '/' && 'bg-brand-pink',
-			]}
+			class="relative flex min-h-10 shrink-0 items-center rounded-full px-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 sm:min-h-11 sm:px-3"
 		>
+			{
+				pathname === '/' && (
+					<span
+						aria-hidden="true"
+						transition:name="nav-active-pill"
+						class="absolute inset-0 rounded-full bg-brand-pink"
+					/>
+				)
+			}
 			<img
-				class="relative bottom-px h-auto w-11 sm:bottom-[3px] sm:w-24"
+				class="relative z-10 bottom-px h-auto w-11 sm:bottom-[3px] sm:w-24"
 				src={wordmark.src}
 				alt="Beam"
 			/>
@@ -47,12 +55,18 @@ const links = [
 						<a
 							href={href}
 							aria-current={pathname === href ? 'page' : undefined}
-							class:list={[
-								'flex min-h-10 items-center rounded-full px-1.5 text-[0.625rem] text-brand-black outline-none transition-[color,background-color,opacity] hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-3 sm:text-sm',
-								pathname === href && 'bg-brand-pink',
-							]}
+							class="relative flex min-h-10 items-center rounded-full px-1.5 text-[0.625rem] text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-3 sm:text-sm"
 						>
-							{label}
+							{
+								pathname === href && (
+									<span
+										aria-hidden="true"
+										transition:name="nav-active-pill"
+										class="absolute inset-0 rounded-full bg-brand-pink"
+									/>
+								)
+							}
+							<span class="relative z-10">{label}</span>
 						</a>
 					</li>
 				))

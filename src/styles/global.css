@@ -82,6 +82,16 @@
 	--color-focus: var(--color-brand-black);
 }
 
+::view-transition-group(site-header) {
+	z-index: 50;
+}
+
+::view-transition-group(nav-active-pill) {
+	z-index: 51;
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
 @layer base {
 	html {
 		background: var(--color-page);
