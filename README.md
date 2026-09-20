@@ -1,46 +1,66 @@
-# Astro Starter Kit: Basics
+# Beam Hair Salon
+
+The website for Beam Hair Salon in Ketchum, Idaho. It presents Beam's services, team, and gallery in a mobile-first interface and includes an embedded Square appointment-booking flow.
+
+## Tech stack
+
+- [Astro 7](https://astro.build/)
+- [Tailwind CSS 4](https://tailwindcss.com/)
+- [Cloudflare adapter](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)
+- [Wrangler](https://developers.cloudflare.com/workers/wrangler/)
+
+## Requirements
+
+- Node.js 22.12 or newer
+- npm
+
+## Local development
+
+Install dependencies and start the development server:
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The site is available at `http://localhost:4321` by default.
 
-## 🚀 Project Structure
+## Commands
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the local development server |
+| `npm run build` | Create a production build in `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run generate-types` | Generate Cloudflare runtime types |
+| `npm run astro -- --help` | Display Astro CLI help |
+
+## Project structure
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+src/
+├── assets/       Images, logos, and local fonts
+├── components/   Shared navigation, footer, team, and booking UI
+├── data/         Structured service-menu content
+├── layouts/      Shared page layout
+├── pages/        File-based routes
+└── styles/       Global styles and design tokens
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+The main routes are:
 
-## 🧞 Commands
+- `/` — homepage and team
+- `/services` — service menus
+- `/gallery` — image gallery
 
-All commands are run from the root of the project, from a terminal:
+## Updating content
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- Edit service offerings in `src/data/service-menus.json`.
+- Add or replace site imagery in `src/assets/images/`.
+- Update team information in `src/components/FamSection.astro`.
+- Update the Square booking widget in `src/components/BookingModal.astro`.
+- Adjust shared colors, typography, and global styles in `src/styles/global.css`.
 
-## 👀 Want to learn more?
+## Production
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Run `npm run build` to generate the production site in `dist/`. Cloudflare deployment settings are defined in `wrangler.jsonc`.
