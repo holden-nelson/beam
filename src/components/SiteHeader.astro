@@ -18,19 +18,105 @@ const links = [
 	transition:name="site-header"
 	transition:animate="none"
 	class:list={[
-		'top-3 z-50 flex w-full justify-center px-2 sm:top-5 sm:px-4',
-		overlay ? 'fixed' : 'sticky',
+		'fixed top-3 z-50 flex w-full justify-center px-2 sm:top-5 sm:px-4',
+		!overlay && 'sm:sticky',
 	]}
 >
 	<nav
+		data-mobile-nav
 		aria-label="Primary navigation"
-		class="font-subheading flex w-fit max-w-full items-center gap-0.5 rounded-full border border-brand-black/10 bg-brand-cream p-1 font-bold shadow-2xl sm:gap-1.5 sm:p-1.5"
+		class="font-subheading w-64 max-w-[calc(100vw-1rem)] overflow-hidden rounded-[1.75rem] border border-brand-black/10 bg-brand-cream p-1.5 font-bold shadow-2xl sm:hidden"
+	>
+		<div class="flex min-h-11 items-center justify-between gap-4">
+			<a
+				href="/"
+				aria-label="Beam Hair Salon home"
+				aria-current={pathname === '/' ? 'page' : undefined}
+				class:list={[
+					'flex min-h-11 items-center rounded-full px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2',
+					pathname === '/' && 'bg-brand-pink',
+				]}
+			>
+				<img class="relative bottom-[2px] h-auto w-24" src={wordmark.src} alt="Beam" />
+			</a>
+
+			<button
+				type="button"
+				data-mobile-menu-toggle
+				aria-expanded="false"
+				aria-controls="mobile-navigation-menu"
+				aria-label="Open navigation menu"
+				class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-green text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+			>
+				<svg
+					data-menu-open-icon
+					aria-hidden="true"
+					viewBox="0 0 24 24"
+					class="size-6"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+				>
+					<path d="M5 7h14M5 12h14M5 17h14"></path>
+				</svg>
+				<svg
+					data-menu-close-icon
+					aria-hidden="true"
+					viewBox="0 0 24 24"
+					class="hidden size-6"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+				>
+					<path d="M6 6l12 12M18 6 6 18"></path>
+				</svg>
+			</button>
+		</div>
+
+		<div id="mobile-navigation-menu" data-mobile-menu class="mobile-menu" aria-hidden="true" inert>
+			<div class="min-h-0 overflow-hidden">
+				<ul class="mt-1.5 flex flex-col gap-1 border-t border-brand-black/10 pt-1.5">
+					{
+						links.map(({ href, label }) => (
+							<li>
+								<a
+									href={href}
+									aria-current={pathname === href ? 'page' : undefined}
+									class:list={[
+										'flex min-h-12 items-center rounded-full px-4 text-base text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2',
+										pathname === href && 'bg-brand-pink',
+									]}
+								>
+									{label}
+								</a>
+							</li>
+						))
+					}
+					<li>
+						<button
+							type="button"
+							data-booking-trigger
+							class="flex min-h-12 w-full items-center rounded-full bg-brand-green px-4 text-base text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+						>
+							Book
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<nav
+		aria-label="Primary navigation"
+		class="font-subheading hidden w-fit max-w-full items-center gap-1.5 rounded-full border border-brand-black/10 bg-brand-cream p-1.5 font-bold shadow-2xl sm:flex"
 	>
 		<a
 			href="/"
 			aria-label="Beam Hair Salon home"
 			aria-current={pathname === '/' ? 'page' : undefined}
-			class="relative flex min-h-10 shrink-0 items-center rounded-full px-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 sm:min-h-11 sm:px-3"
+			class="relative flex min-h-11 shrink-0 items-center rounded-full px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2"
 		>
 			{
 				pathname === '/' && (
@@ -42,30 +128,28 @@ const links = [
 				)
 			}
 			<img
-				class="relative z-10 bottom-px h-auto w-11 sm:bottom-[3px] sm:w-24"
+				class="relative z-10 bottom-[3px] h-auto w-24"
 				src={wordmark.src}
 				alt="Beam"
 			/>
 		</a>
 
-		<ul class="flex items-center gap-0.5 sm:gap-1">
+		<ul class="flex items-center gap-1">
 			{
 				links.map(({ href, label }) => (
 					<li>
 						<a
 							href={href}
 							aria-current={pathname === href ? 'page' : undefined}
-							class="relative flex min-h-10 items-center rounded-full px-1.5 text-[0.625rem] text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-3 sm:text-sm"
+							class="relative flex min-h-11 items-center rounded-full px-3 text-sm text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
 						>
-							{
-								pathname === href && (
-									<span
-										aria-hidden="true"
-										transition:name="nav-active-pill"
-										class="absolute inset-0 rounded-full bg-brand-pink"
-									/>
-								)
-							}
+							{pathname === href && (
+								<span
+									aria-hidden="true"
+									transition:name="nav-active-pill"
+									class="absolute inset-0 rounded-full bg-brand-pink"
+								/>
+							)}
 							<span class="relative z-10">{label}</span>
 						</a>
 					</li>
@@ -75,7 +159,7 @@ const links = [
 				<button
 					type="button"
 					data-booking-trigger
-					class="flex min-h-10 items-center rounded-full bg-brand-green px-2 text-[0.625rem] text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 sm:min-h-11 sm:px-4 sm:text-sm"
+					class="flex min-h-11 items-center rounded-full bg-brand-green px-4 text-sm text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
 				>
 					Book
 				</button>
@@ -83,3 +167,77 @@ const links = [
 		</ul>
 	</nav>
 </header>
+
+<script>
+	let mobileNavListeners: AbortController | undefined;
+
+	document.addEventListener('astro:page-load', () => {
+		const nav = document.querySelector<HTMLElement>('[data-mobile-nav]');
+		const toggle = nav?.querySelector<HTMLButtonElement>('[data-mobile-menu-toggle]');
+		const menu = nav?.querySelector<HTMLElement>('[data-mobile-menu]');
+		const openIcon = toggle?.querySelector<SVGElement>('[data-menu-open-icon]');
+		const closeIcon = toggle?.querySelector<SVGElement>('[data-menu-close-icon]');
+
+		if (!nav || !toggle || !menu || !openIcon || !closeIcon) return;
+		mobileNavListeners?.abort();
+		mobileNavListeners = new AbortController();
+		const { signal } = mobileNavListeners;
+
+		const setOpen = (open: boolean) => {
+			nav.dataset.open = String(open);
+			toggle.setAttribute('aria-expanded', String(open));
+			toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+			menu.setAttribute('aria-hidden', String(!open));
+			menu.toggleAttribute('inert', !open);
+			openIcon.classList.toggle('hidden', open);
+			closeIcon.classList.toggle('hidden', !open);
+		};
+
+		setOpen(false);
+		toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'), {
+			signal,
+		});
+
+		nav.querySelectorAll<HTMLAnchorElement>('a').forEach((link) => {
+			link.addEventListener('click', () => setOpen(false), { signal });
+		});
+
+		nav
+			.querySelector<HTMLElement>('[data-booking-trigger]')
+			?.addEventListener('click', () => setOpen(false), { signal });
+
+		document.addEventListener('click', (event) => {
+			if (toggle.getAttribute('aria-expanded') === 'true' && !nav.contains(event.target as Node)) {
+				setOpen(false);
+			}
+		}, { signal });
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key !== 'Escape' || toggle.getAttribute('aria-expanded') !== 'true') return;
+			setOpen(false);
+			toggle.focus();
+		}, { signal });
+	});
+</script>
+
+<style>
+	.mobile-menu {
+		display: grid;
+		grid-template-rows: 0fr;
+		opacity: 0;
+		transition:
+			grid-template-rows 220ms cubic-bezier(0.76, 0, 0.24, 1),
+			opacity 160ms ease;
+	}
+
+	[data-mobile-nav][data-open='true'] .mobile-menu {
+		grid-template-rows: 1fr;
+		opacity: 1;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mobile-menu {
+			transition: none;
+		}
+	}
+</style>
