@@ -6,12 +6,13 @@ interface Props {
 }
 
 const { overlay = false } = Astro.props;
-const pathname = Astro.url.pathname;
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const homeLink = { href: '/', label: 'Beam', wordmark: true };
 const links = [
 	{ href: '/services', label: 'Services' },
-	{ href: '/merch', label: 'Merch' },
 	{ href: '/gallery', label: 'Gallery' },
 ];
+const activeMobileLink = links.find(({ href }) => href === pathname) ?? homeLink;
 ---
 
 <header
@@ -29,11 +30,27 @@ const links = [
 	>
 		<div class="flex min-h-11 items-center justify-between gap-4">
 			<a
+				data-mobile-current-link
+				href={activeMobileLink.href}
+				aria-label={activeMobileLink.wordmark ? 'Beam Hair Salon home' : undefined}
+				aria-current="page"
+				class="mobile-current-link flex min-h-11 items-center rounded-full bg-brand-pink px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2"
+			>
+				{
+					activeMobileLink.wordmark ? (
+						<img class="relative bottom-[2px] h-auto w-24" src={wordmark.src} alt="Beam" />
+					) : (
+						<span class="px-1 text-base text-brand-black">{activeMobileLink.label}</span>
+					)
+				}
+			</a>
+			<a
+				data-mobile-home-link
 				href="/"
 				aria-label="Beam Hair Salon home"
 				aria-current={pathname === '/' ? 'page' : undefined}
 				class:list={[
-					'flex min-h-11 items-center rounded-full px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2',
+					'mobile-home-link min-h-11 items-center rounded-full px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2',
 					pathname === '/' && 'bg-brand-pink',
 				]}
 			>
@@ -221,6 +238,18 @@ const links = [
 </script>
 
 <style>
+	.mobile-home-link {
+		display: none;
+	}
+
+	[data-mobile-nav][data-open='true'] .mobile-current-link {
+		display: none;
+	}
+
+	[data-mobile-nav][data-open='true'] .mobile-home-link {
+		display: flex;
+	}
+
 	.mobile-menu {
 		display: grid;
 		grid-template-rows: 0fr;
