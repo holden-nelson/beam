@@ -1,0 +1,203 @@
+---
+// Prototype: responsive static cart preview opened from the global pill navigation.
+import { Image } from 'astro:assets';
+import hatImage from '../assets/images/merch.jpg';
+import sweaterImage from '../assets/images/gallery/gallery_3.jpg';
+
+const items = [
+	{
+		name: 'B HAT',
+		variant: 'Small',
+		quantity: 1,
+		price: '$35',
+		image: hatImage,
+		alt: 'Model wearing the B Hat',
+	},
+	{
+		name: 'B SWEATER',
+		variant: 'Large',
+		quantity: 1,
+		price: '$45',
+		image: sweaterImage,
+		alt: 'Models standing together beside a river',
+	},
+];
+---
+
+<dialog id="cart-prototype" aria-labelledby="cart-prototype-title">
+	<div data-cart-panel class="flex h-full min-h-0 flex-col overflow-hidden bg-brand-cream text-brand-black sm:rounded-2xl">
+		<header class="flex shrink-0 items-center justify-between gap-4 border-b border-brand-black/10 px-5 py-4 sm:px-6">
+			<div>
+				<h2 id="cart-prototype-title" class="font-subheading text-xl font-bold leading-none sm:text-2xl">
+					Your cart
+				</h2>
+				<p class="mt-1 font-body text-sm">2 items</p>
+			</div>
+			<button
+				type="button"
+				data-cart-close
+				aria-label="Close cart"
+				class="font-subheading flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-green text-2xl leading-none text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+			>
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</header>
+
+		<div class="min-h-0 flex-1 overflow-y-auto px-5 sm:px-6">
+			<ul class="divide-y divide-brand-black/15">
+				{
+					items.map(({ name, variant, quantity, price, image, alt }) => (
+						<li class="grid grid-cols-[5rem_minmax(0,1fr)_auto] gap-4 py-5">
+							<div class="aspect-[3/4] overflow-hidden rounded-lg">
+								<Image
+									src={image}
+									alt={alt}
+									class="h-full w-full object-cover object-center"
+									widths={[96, 160]}
+									sizes="5rem"
+								/>
+							</div>
+							<div class="min-w-0 pt-1">
+								<h3 class="font-subheading text-base font-bold leading-tight">{name}</h3>
+								<p class="mt-2 font-body text-sm">Size: {variant}</p>
+								<p class="mt-1 font-body text-sm">Qty: {quantity}</p>
+							</div>
+							<p class="pt-1 font-subheading text-sm font-bold">{price}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+
+		<footer class="shrink-0 border-t border-brand-black/10 px-5 py-5 sm:px-6">
+			<div class="flex items-center justify-between gap-4 font-subheading text-base font-bold">
+				<span>Subtotal</span>
+				<span>$80</span>
+			</div>
+			<p class="mt-2 font-body text-xs leading-relaxed">Pickup details and taxes are calculated at checkout.</p>
+			<button
+				type="button"
+				disabled
+				class="font-subheading mt-5 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-green px-5 py-2 text-sm font-bold text-brand-cream"
+			>
+				Checkout
+			</button>
+		</footer>
+	</div>
+</dialog>
+
+<script>
+	let cartPrototypeListeners: AbortController | undefined;
+
+	document.addEventListener('astro:page-load', () => {
+		cartPrototypeListeners?.abort();
+		cartPrototypeListeners = new AbortController();
+		const { signal } = cartPrototypeListeners;
+		const dialog = document.querySelector<HTMLDialogElement>('#cart-prototype');
+		const panel = dialog?.querySelector<HTMLElement>('[data-cart-panel]');
+		const closeButton = dialog?.querySelector<HTMLButtonElement>('[data-cart-close]');
+		const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-cart-trigger]'));
+		const desktopMedia = window.matchMedia('(min-width: 640px)');
+		let lastTrigger: HTMLButtonElement | null = null;
+
+		if (!dialog || !panel || !closeButton || triggers.length === 0) return;
+		if (dialog.open) dialog.close();
+
+		const setExpanded = (expanded: boolean) => {
+			triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', String(expanded)));
+		};
+
+		const positionDesktopCart = () => {
+			if (!lastTrigger || !desktopMedia.matches) return;
+			const triggerRect = lastTrigger.getBoundingClientRect();
+			const width = dialog.getBoundingClientRect().width;
+			const left = Math.min(window.innerWidth - width - 16, Math.max(16, triggerRect.right - width));
+			dialog.style.setProperty('--cart-top', `${triggerRect.bottom + 12}px`);
+			dialog.style.setProperty('--cart-left', `${left}px`);
+		};
+
+		triggers.forEach((trigger) => {
+			trigger.addEventListener('click', () => {
+				if (dialog.open) {
+					dialog.close();
+					return;
+				}
+
+				const mobileMenuToggle = document.querySelector<HTMLButtonElement>('[data-mobile-menu-toggle]');
+				if (mobileMenuToggle?.getAttribute('aria-expanded') === 'true') mobileMenuToggle.click();
+
+				lastTrigger = trigger;
+				if (desktopMedia.matches) dialog.show();
+				else dialog.showModal();
+				setExpanded(true);
+				positionDesktopCart();
+			}, { signal });
+		});
+
+		closeButton.addEventListener('click', () => dialog.close(), { signal });
+		dialog.addEventListener('click', (event) => {
+			if (event.target === dialog) dialog.close();
+		}, { signal });
+		document.addEventListener('click', (event) => {
+			if (!dialog.open || !desktopMedia.matches) return;
+			const target = event.target as Node;
+			if (panel.contains(target) || triggers.some((trigger) => trigger.contains(target))) return;
+			dialog.close();
+		}, { signal });
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && dialog.open && desktopMedia.matches) dialog.close();
+		}, { signal });
+		dialog.addEventListener('close', () => {
+			setExpanded(false);
+			if (lastTrigger?.isConnected) lastTrigger.focus();
+		}, { signal });
+		window.addEventListener('resize', positionDesktopCart, { signal });
+		desktopMedia.addEventListener('change', () => {
+			if (dialog.open) dialog.close();
+		}, { signal });
+	});
+</script>
+
+<style>
+	@media (max-width: 639px) {
+		:global(html:has(#cart-prototype[open])),
+		:global(body:has(#cart-prototype[open])) {
+			overflow: hidden;
+		}
+	}
+
+	#cart-prototype {
+		position: fixed;
+		z-index: 60;
+		inset: 0;
+		width: 100%;
+		max-width: none;
+		height: 100dvh;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		overflow: hidden;
+	}
+
+	#cart-prototype::backdrop {
+		background: rgb(0 0 0 / 55%);
+		backdrop-filter: blur(3px);
+	}
+
+	@media (min-width: 640px) {
+		#cart-prototype {
+			inset: auto;
+			top: var(--cart-top, 5rem);
+			left: var(--cart-left, calc(50% - 13rem));
+			width: min(26rem, calc(100vw - 2rem));
+			height: auto;
+			max-height: calc(100dvh - var(--cart-top, 5rem) - 1rem);
+			margin: 0;
+			border-radius: 1rem;
+			box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 22%);
+		}
+
+	}
+</style>

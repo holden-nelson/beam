@@ -3,6 +3,7 @@ import { ClientRouter, fade } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import BookingModal from '../components/BookingModal.astro';
+import CartPrototype from '../components/CartPrototype.astro';
 import favicon from '../assets/beam-graphic-blackpink.svg';
 import '../styles/global.css';
 
@@ -36,6 +37,7 @@ const { title = 'Beam Hair Salon', overlayHeader = false } = Astro.props;
 			</main>
 			<SiteFooter />
 			<BookingModal />
+			<CartPrototype />
 		</div>
 	</body>
 </html>

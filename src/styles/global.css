@@ -95,6 +95,7 @@
 @layer base {
 	html {
 		background: var(--color-page);
+		scrollbar-gutter: stable;
 	}
 
 	body {

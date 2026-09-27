@@ -1,0 +1,148 @@
+---
+// Prototype: one reusable product-image carousel on the existing Shop route.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+	images: Array<{ src: ImageMetadata; alt: string }>;
+	label: string;
+}
+
+const { images, label } = Astro.props;
+---
+
+<div data-product-carousel>
+	<div
+		data-carousel-viewport
+		tabindex="0"
+		aria-roledescription="carousel"
+		aria-label={label}
+		class="relative aspect-[3/4] w-full touch-pan-y overflow-hidden rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+	>
+		{
+			images.map(({ src, alt }, index) => (
+				<div
+					data-carousel-slide
+					aria-hidden={index === 0 ? 'false' : 'true'}
+					class:list={[
+						'absolute inset-0 transition-opacity duration-200',
+						index === 0 ? 'opacity-100' : 'pointer-events-none opacity-0',
+					]}
+				>
+					<Image
+						src={src}
+						alt={alt}
+						class="h-full w-full object-cover object-center"
+						widths={[320, 480, 720]}
+						sizes="(min-width: 640px) 24rem, calc(100vw - 3rem)"
+						loading={index === 0 ? 'eager' : 'lazy'}
+					/>
+				</div>
+			))
+		}
+
+		<button
+			type="button"
+			data-carousel-previous
+			aria-label="Show previous product image"
+			class="absolute top-1/2 left-3 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-brand-cream/90 text-brand-black shadow-lg outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+		>
+			<svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="m15 18-6-6 6-6"></path>
+			</svg>
+		</button>
+
+		<button
+			type="button"
+			data-carousel-next
+			aria-label="Show next product image"
+			class="absolute top-1/2 right-3 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-brand-cream/90 text-brand-black shadow-lg outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+		>
+			<svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="m9 18 6-6-6-6"></path>
+			</svg>
+		</button>
+	</div>
+
+	<div class="mt-3 flex justify-center gap-2" aria-label="Choose product image">
+		{
+			images.map((_, index) => (
+				<button
+					type="button"
+					data-carousel-dot
+					data-index={index}
+					aria-label={`Show product image ${index + 1}`}
+					aria-current={index === 0 ? 'true' : undefined}
+					class:list={[
+						'size-2.5 rounded-full border border-brand-green outline-none transition-colors focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2',
+						index === 0 ? 'bg-brand-green' : 'bg-transparent',
+					]}
+				/>
+			))
+		}
+	</div>
+
+	<p data-carousel-status class="sr-only" aria-live="polite">Image 1 of {images.length}</p>
+</div>
+
+<script>
+	let carouselControllers: AbortController[] = [];
+
+	document.addEventListener('astro:page-load', () => {
+		carouselControllers.forEach((controller) => controller.abort());
+		carouselControllers = [];
+
+		document.querySelectorAll<HTMLElement>('[data-product-carousel]').forEach((carousel) => {
+			const viewport = carousel.querySelector<HTMLElement>('[data-carousel-viewport]');
+			const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-slide]'));
+			const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-carousel-dot]'));
+			const previous = carousel.querySelector<HTMLButtonElement>('[data-carousel-previous]');
+			const next = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
+			const status = carousel.querySelector<HTMLElement>('[data-carousel-status]');
+			if (!viewport || !previous || !next || !status || slides.length === 0) return;
+
+			const controller = new AbortController();
+			carouselControllers.push(controller);
+			const { signal } = controller;
+			let current = 0;
+			let touchStartX = 0;
+
+			const show = (index: number) => {
+				current = (index + slides.length) % slides.length;
+				slides.forEach((slide, slideIndex) => {
+					const active = slideIndex === current;
+					slide.classList.toggle('opacity-100', active);
+					slide.classList.toggle('opacity-0', !active);
+					slide.classList.toggle('pointer-events-none', !active);
+					slide.setAttribute('aria-hidden', String(!active));
+				});
+				dots.forEach((dot, dotIndex) => {
+					const active = dotIndex === current;
+					dot.classList.toggle('bg-brand-green', active);
+					dot.classList.toggle('bg-transparent', !active);
+					if (active) dot.setAttribute('aria-current', 'true');
+					else dot.removeAttribute('aria-current');
+				});
+				status.textContent = `Image ${current + 1} of ${slides.length}`;
+			};
+
+			previous.addEventListener('click', () => show(current - 1), { signal });
+			next.addEventListener('click', () => show(current + 1), { signal });
+			dots.forEach((dot) => {
+				dot.addEventListener('click', () => show(Number(dot.dataset.index)), { signal });
+			});
+			viewport.addEventListener('keydown', (event) => {
+				if (event.key === 'ArrowLeft') show(current - 1);
+				if (event.key === 'ArrowRight') show(current + 1);
+			}, { signal });
+			viewport.addEventListener('touchstart', (event) => {
+				touchStartX = event.touches[0]?.clientX ?? 0;
+			}, { signal, passive: true });
+			viewport.addEventListener('touchend', (event) => {
+				const distance = (event.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+				if (Math.abs(distance) < 40) return;
+				show(current + (distance < 0 ? 1 : -1));
+			}, { signal, passive: true });
+		});
+	});
+</script>

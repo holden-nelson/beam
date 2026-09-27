@@ -11,6 +11,7 @@ const homeLink = { href: '/', label: 'Beam', wordmark: true };
 const links = [
 	{ href: '/services', label: 'Services' },
 	{ href: '/gallery', label: 'Gallery' },
+	{ href: '/shop', label: 'Shop' },
 ];
 const activeMobileLink = links.find(({ href }) => href === pathname) ?? homeLink;
 ---
@@ -28,7 +29,7 @@ const activeMobileLink = links.find(({ href }) => href === pathname) ?? homeLink
 		aria-label="Primary navigation"
 		class="font-subheading w-64 max-w-[calc(100vw-1rem)] overflow-hidden rounded-[1.75rem] border border-brand-black/10 bg-brand-cream p-1.5 font-bold shadow-2xl sm:hidden"
 	>
-		<div class="flex min-h-11 items-center justify-between gap-4">
+		<div class="flex min-h-11 items-center justify-between gap-2">
 			<a
 				data-mobile-current-link
 				href={activeMobileLink.href}
@@ -56,6 +57,22 @@ const activeMobileLink = links.find(({ href }) => href === pathname) ?? homeLink
 			>
 				<img class="relative bottom-[2px] h-auto w-24" src={wordmark.src} alt="Beam" />
 			</a>
+
+			<button
+				type="button"
+				data-cart-trigger
+				aria-controls="cart-prototype"
+				aria-expanded="false"
+				aria-label="Open cart, 2 items"
+				class="relative flex size-11 shrink-0 items-center justify-center rounded-full text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+			>
+				<svg aria-hidden="true" viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="9" cy="20" r="1"></circle>
+					<circle cx="19" cy="20" r="1"></circle>
+					<path d="M3 4h2l2.5 11h10.75l2-7H6"></path>
+				</svg>
+				<span aria-hidden="true" class="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full bg-brand-pink text-[0.65rem] font-bold leading-none text-brand-black">2</span>
+			</button>
 
 			<button
 				type="button"
@@ -172,6 +189,23 @@ const activeMobileLink = links.find(({ href }) => href === pathname) ?? homeLink
 					</li>
 				))
 			}
+			<li>
+				<button
+					type="button"
+					data-cart-trigger
+					aria-controls="cart-prototype"
+					aria-expanded="false"
+					aria-label="Open cart, 2 items"
+					class="relative flex size-11 items-center justify-center rounded-full text-brand-black outline-none transition-opacity hover:opacity-60 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+				>
+					<svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="9" cy="20" r="1"></circle>
+						<circle cx="19" cy="20" r="1"></circle>
+						<path d="M3 4h2l2.5 11h10.75l2-7H6"></path>
+					</svg>
+					<span aria-hidden="true" class="absolute top-0 right-0 flex size-4 items-center justify-center rounded-full bg-brand-pink text-[0.6rem] font-bold leading-none text-brand-black">2</span>
+				</button>
+			</li>
 			<li>
 				<button
 					type="button"

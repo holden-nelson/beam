@@ -1,0 +1,80 @@
+---
+import ProductCarouselPrototype from '../components/ProductCarouselPrototype.astro';
+import cowboyPicnicImage from '../assets/images/cowboy-picnic.jpg';
+import galleryImageOne from '../assets/images/gallery/gallery_1.jpg';
+import galleryImageTwo from '../assets/images/gallery/gallery_2.jpg';
+import galleryImageThree from '../assets/images/gallery/gallery_3.jpg';
+import galleryImageFour from '../assets/images/gallery/gallery_4.jpg';
+import galleryImageFive from '../assets/images/gallery/gallery_5.jpg';
+import merchImage from '../assets/images/merch.jpg';
+import Layout from '../layouts/Layout.astro';
+
+const products = [
+	{
+		id: 'b-hat',
+		name: 'B HAT',
+		price: '$35',
+		images: [
+			{ src: merchImage, alt: 'Model wearing the B Hat' },
+			{ src: cowboyPicnicImage, alt: 'Models relaxing at an outdoor picnic' },
+			{ src: galleryImageOne, alt: 'Styling products in a leather tool belt' },
+			{ src: galleryImageTwo, alt: 'Friends fishing beside a river' },
+		],
+	},
+	{
+		id: 'b-sweater',
+		name: 'B SWEATER',
+		price: '$45',
+		images: [
+			{ src: galleryImageThree, alt: 'Models standing together beside a river' },
+			{ src: galleryImageFour, alt: 'Friends outdoors with mountains in the distance' },
+			{ src: galleryImageFive, alt: 'Hair color samples held over a dark hide' },
+		],
+	},
+];
+---
+
+<Layout title="Shop | Beam Hair Salon">
+	<section class="bg-brand-cream px-6 py-16 sm:px-10 sm:py-24 lg:px-16" aria-label="Shop">
+		<div class="mx-auto w-full max-w-7xl">
+			<h1 class="sr-only">Shop</h1>
+			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+				{
+					products.map(({ id, name, price, images }) => (
+						<article class="w-full max-w-sm text-brand-black">
+							<ProductCarouselPrototype images={images} label={`${name} product images`} />
+
+							<div class="flex flex-col items-start gap-2 pt-5">
+								<h2 class="font-subheading text-xl font-bold leading-none sm:text-2xl">{name}</h2>
+								<p class="font-subheading text-base leading-none sm:text-lg">{price}</p>
+								<fieldset class="mt-3">
+									<legend class="sr-only">Size</legend>
+									<div class="flex flex-wrap gap-2">
+										<label class="cursor-pointer">
+											<input class="peer sr-only" type="radio" name={`${id}-size`} value="small" checked />
+											<span class="font-subheading inline-flex min-h-9 items-center justify-center rounded-full border border-brand-black/25 bg-brand-cream px-4 py-1.5 text-sm font-medium text-brand-black transition-colors peer-checked:border-brand-pink peer-checked:bg-brand-pink peer-focus-visible:ring-2 peer-focus-visible:ring-brand-black peer-focus-visible:ring-offset-2">
+												Small
+											</span>
+										</label>
+										<label class="cursor-pointer">
+											<input class="peer sr-only" type="radio" name={`${id}-size`} value="large" />
+											<span class="font-subheading inline-flex min-h-9 items-center justify-center rounded-full border border-brand-black/25 bg-brand-cream px-4 py-1.5 text-sm font-medium text-brand-black transition-colors peer-checked:border-brand-pink peer-checked:bg-brand-pink peer-focus-visible:ring-2 peer-focus-visible:ring-brand-black peer-focus-visible:ring-offset-2">
+												Large
+											</span>
+										</label>
+									</div>
+								</fieldset>
+								<button
+									type="button"
+									class="font-subheading mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-brand-green px-5 py-2 text-sm font-bold text-brand-cream outline-none transition-opacity hover:opacity-75 focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2"
+								>
+									Add to cart
+								</button>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</div>
+	</section>
+</Layout>
