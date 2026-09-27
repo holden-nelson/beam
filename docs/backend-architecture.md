@@ -118,10 +118,86 @@ sequenceDiagram
 
 ### `GET /api/products`
 
-Returns a storefront-safe projection of Square Catalog and Inventory data.
+Returns a storefront-safe projection of Square Catalog and Inventory data:
 
-The response may be cached briefly at the edge, but checkout must revalidate
-against Square rather than trusting previously cached product data.
+```json
+{
+  "products": [
+    {
+      "id": "SQUARE_ITEM_ID",
+      "name": "B HAT",
+      "images": [
+        {
+          "id": "SQUARE_IMAGE_ID",
+          "url": "https://...",
+          "alt": "Model wearing the B Hat"
+        }
+      ],
+      "optionGroups": [
+        {
+          "id": "SQUARE_OPTION_ID",
+          "name": "Size",
+          "values": [
+            { "id": "SMALL_VALUE_ID", "name": "Small" },
+            { "id": "LARGE_VALUE_ID", "name": "Large" }
+          ]
+        }
+      ],
+      "defaultVariationId": "SMALL_VARIATION_ID",
+      "variations": [
+        {
+          "id": "SMALL_VARIATION_ID",
+          "name": "Small",
+          "optionValues": [
+            {
+              "optionId": "SQUARE_OPTION_ID",
+              "valueId": "SMALL_VALUE_ID"
+            }
+          ],
+          "price": {
+            "amount": 3500,
+            "currency": "USD"
+          },
+          "available": true,
+          "availableQuantity": 4,
+          "imageIds": ["SQUARE_IMAGE_ID"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+The endpoint will:
+
+1. Return non-archived `REGULAR` items in the configured shop category that are
+   enabled at the salon location.
+2. Return only enabled, sellable, fixed-price, inventory-tracked variations,
+   while retaining sold-out variations so the UI can disable them.
+3. Resolve location-specific prices and inventory settings. Money amounts use
+   integer minor units. `availableQuantity` is the non-negative whole-unit
+   `IN_STOCK` count, and `available` is false when that count is zero or Square
+   marks the variation sold out.
+4. Represent size, color, and future variation dimensions through
+   `optionGroups` and `optionValues`. Products with one unconfigured variation
+   may return an empty `optionGroups` array.
+5. Return the ordered, deduplicated union of item and variation images. Image
+   captions become alt text, falling back to the product name; `imageIds`
+   associates variation-specific images with a selection.
+6. Consume Square pagination internally and return one unpaginated product
+   list. Items with no eligible variations are omitted; an empty shop returns
+   `200` with `{ "products": [] }`.
+
+Products use Square item and variation IDs. `defaultVariationId` is the first
+available variation by Square ordinal, falling back to the first variation.
+Product order follows the Square catalog search order, and variation order
+follows Square ordinal.
+
+The response may be cached briefly at the edge, for example with
+`Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=300`.
+Incomplete Square responses fail the whole request with a generic `502` rather
+than returning partial product data. Checkout must always revalidate catalog,
+price, and inventory data instead of trusting this response.
 
 ### `POST /api/checkout`
 
