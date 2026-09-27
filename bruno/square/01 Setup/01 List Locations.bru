@@ -1,0 +1,29 @@
+meta {
+  name: List Locations
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v2/locations
+  body: none
+  auth: inherit
+}
+
+tests {
+  const body = res.getBody();
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+  });
+
+  test("returns at least one active location", function () {
+    expect(body.locations).to.be.an("array");
+    expect(body.locations.some((location) => location.status === "ACTIVE")).to.equal(true);
+  });
+}
+
+docs {
+  Run this first and copy the salon's ACTIVE location ID into the selected environment.
+}

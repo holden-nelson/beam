@@ -1,0 +1,39 @@
+meta {
+  name: List Catalog - Next Page
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/v2/catalog/list
+  body: none
+  auth: inherit
+}
+
+params:query {
+  types: ITEM,ITEM_OPTION,CATEGORY,IMAGE,TAX,DISCOUNT,PRICING_RULE,PRODUCT_SET,TIME_PERIOD
+  cursor: {{catalogCursor}}
+}
+
+script:pre-request {
+  if (!bru.getVar("catalogCursor")) {
+    throw new Error("No catalogCursor is available. Run List Catalog first.");
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body.cursor) {
+    bru.setVar("catalogCursor", body.cursor);
+  }
+}
+
+tests {
+  const body = res.getBody();
+
+  test("returns the next catalog page", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+    expect(body.objects).to.be.an("array");
+  });
+}

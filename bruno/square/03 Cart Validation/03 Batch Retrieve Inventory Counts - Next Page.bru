@@ -1,0 +1,50 @@
+meta {
+  name: Batch Retrieve Inventory Counts - Next Page
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/v2/inventory/counts/batch-retrieve
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "catalog_object_ids": [
+      "{{variationId}}"
+    ],
+    "location_ids": [
+      "{{locationId}}"
+    ],
+    "states": [
+      "IN_STOCK"
+    ],
+    "limit": 1000,
+    "cursor": "{{inventoryCursor}}"
+  }
+}
+
+script:pre-request {
+  if (!bru.getVar("inventoryCursor")) {
+    throw new Error("No inventoryCursor is available. Run Batch Retrieve Inventory Counts first.");
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body.cursor) {
+    bru.setVar("inventoryCursor", body.cursor);
+  }
+}
+
+tests {
+  const body = res.getBody();
+
+  test("returns the next inventory page", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+    expect(body.counts).to.be.an("array");
+  });
+}

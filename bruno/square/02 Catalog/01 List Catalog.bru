@@ -1,0 +1,41 @@
+meta {
+  name: List Catalog
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v2/catalog/list
+  body: none
+  auth: inherit
+}
+
+params:query {
+  types: ITEM,ITEM_OPTION,CATEGORY,IMAGE,TAX,DISCOUNT,PRICING_RULE,PRODUCT_SET,TIME_PERIOD
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body.cursor) {
+    bru.setVar("catalogCursor", body.cursor);
+  }
+}
+
+tests {
+  const body = res.getBody();
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+  });
+
+  test("returns catalog objects and at least one item", function () {
+    expect(body.objects).to.be.an("array");
+    expect(body.objects.some((object) => object.type === "ITEM")).to.equal(true);
+  });
+}
+
+docs {
+  Choose an ITEM_VARIATION ID nested under an ITEM and save it as variationId.
+  If the response contains a cursor, run List Catalog - Next Page for more objects.
+}

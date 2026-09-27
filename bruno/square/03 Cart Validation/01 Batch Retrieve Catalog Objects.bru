@@ -1,0 +1,67 @@
+meta {
+  name: Batch Retrieve Catalog Objects
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/v2/catalog/batch-retrieve
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "object_ids": [
+      "{{variationId}}"
+    ],
+    "include_related_objects": true,
+    "include_deleted_objects": false
+  }
+}
+
+script:pre-request {
+  const variationId = String(bru.getEnvVar("variationId") || "");
+  const locationId = String(bru.getEnvVar("locationId") || "");
+
+  if (!variationId || variationId.startsWith("REPLACE_WITH_")) {
+    throw new Error("Set variationId from List Catalog before validating the cart.");
+  }
+  if (!locationId || locationId.startsWith("REPLACE_WITH_")) {
+    throw new Error("Set locationId from List Locations before validating the cart.");
+  }
+}
+
+tests {
+  const body = res.getBody();
+  const variationId = String(bru.getEnvVar("variationId"));
+  const locationId = String(bru.getEnvVar("locationId"));
+  const variation = (body.objects || []).find((object) => object.id === variationId);
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+  });
+
+  test("returns the requested, saleable variation", function () {
+    expect(variation).to.be.an("object");
+    expect(variation.type).to.equal("ITEM_VARIATION");
+    expect(variation.is_deleted || false).to.equal(false);
+    expect(variation.item_variation_data).to.have.property("price_money");
+    expect(variation.item_variation_data.price_money.amount).to.be.a("number");
+  });
+
+  test("variation is available at the configured location", function () {
+    const absent = (variation.absent_at_location_ids || []).includes(locationId);
+    expect(absent).to.equal(false);
+
+    if (variation.present_at_all_locations === false) {
+      expect(variation.present_at_location_ids || []).to.include(locationId);
+    }
+  });
+
+  test("includes the parent catalog item", function () {
+    expect(body.related_objects).to.be.an("array");
+    expect(body.related_objects.some((object) => object.type === "ITEM")).to.equal(true);
+  });
+}

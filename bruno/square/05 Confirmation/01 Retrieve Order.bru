@@ -1,0 +1,54 @@
+meta {
+  name: Retrieve Order
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v2/orders/{{orderId}}
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  if (!bru.getVar("orderId")) {
+    throw new Error("No orderId is available. Run Create Payment Link first.");
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  const tender = (body.order?.tenders || []).find((entry) => entry.payment_id);
+
+  if (tender) {
+    bru.setVar("paymentId", tender.payment_id);
+  }
+}
+
+tests {
+  const body = res.getBody();
+  const order = body.order;
+  const paymentTender = (order?.tenders || []).find((entry) => entry.payment_id);
+
+  test("returns the expected order", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+    expect(order.id).to.equal(String(bru.getVar("orderId")));
+    expect(order.location_id).to.equal(String(bru.getEnvVar("locationId")));
+  });
+
+  test("retains one pickup fulfillment", function () {
+    expect(order.fulfillments).to.be.an("array").with.lengthOf(1);
+    expect(order.fulfillments[0].type).to.equal("PICKUP");
+  });
+
+  test("contains a payment tender after hosted checkout", function () {
+    expect(paymentTender).to.be.an("object");
+    expect(paymentTender.payment_id).to.be.a("string").that.is.not.empty;
+  });
+}
+
+docs {
+  Run after paying through checkoutUrl. A paid pickup order can remain OPEN until fulfillment.
+  Inspect pickup_details.recipient to see which buyer details Square adds after checkout.
+}

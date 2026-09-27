@@ -1,0 +1,24 @@
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+  Square-Version: {{squareVersion}}
+}
+
+script:pre-request {
+  const required = ["baseUrl", "squareVersion", "accessToken"];
+
+  for (const name of required) {
+    const value = bru.getEnvVar(name);
+    if (value === undefined || value === null || String(value).trim() === "") {
+      throw new Error(`Missing required Bruno environment variable: ${name}`);
+    }
+  }
+}

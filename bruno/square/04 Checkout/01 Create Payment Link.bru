@@ -1,0 +1,133 @@
+meta {
+  name: Create Payment Link
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/v2/online-checkout/payment-links
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "idempotency_key": "{{attemptId}}",
+    "order": {
+      "location_id": "{{locationId}}",
+      "line_items": [
+        {
+          "catalog_object_id": "{{variationId}}",
+          "quantity": "{{quantity}}"
+        }
+      ],
+      "pricing_options": {
+        "auto_apply_taxes": true,
+        "auto_apply_discounts": true
+      },
+      "fulfillments": [
+        {
+          "type": "PICKUP",
+          "pickup_details": {
+            "schedule_type": "ASAP",
+            "prep_time_duration": "{{pickupPrepDuration}}",
+            "recipient": {
+              "display_name": "{{pickupDisplayName}}"
+            }
+          }
+        }
+      ]
+    },
+    "checkout_options": {
+      "redirect_url": "{{siteUrl}}/checkout/complete",
+      "ask_for_shipping_address": false,
+      "allow_tipping": false,
+      "enable_coupon": false,
+      "enable_loyalty": false
+    }
+  }
+}
+
+script:pre-request {
+  const required = [
+    "locationId",
+    "variationId",
+    "quantity",
+    "siteUrl",
+    "pickupDisplayName",
+    "pickupPrepDuration"
+  ];
+
+  for (const name of required) {
+    const value = String(bru.getEnvVar(name) || "");
+    if (!value || value.startsWith("REPLACE_WITH_")) {
+      throw new Error(`Set ${name} before creating a payment link.`);
+    }
+  }
+
+  const baseUrl = String(bru.getEnvVar("baseUrl"));
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, "");
+  const productionWritesAllowed =
+    String(bru.getEnvVar("allowProductionWrites")).toLowerCase() === "true";
+
+  if (normalizedBaseUrl === "https://connect.squareup.com" && !productionWritesAllowed) {
+    throw new Error(
+      "Production writes are disabled. Set allowProductionWrites to true only for an intentional production test."
+    );
+  }
+
+  if (!bru.getVar("attemptId")) {
+    bru.setVar("attemptId", bru.interpolate("{{$randomUUID}}"));
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  const paymentLink = body.payment_link;
+
+  if (paymentLink) {
+    const originalOrderId = bru.getVar("idempotencyOrderId");
+    const originalPaymentLinkId = bru.getVar("idempotencyPaymentLinkId");
+    const replayMatches =
+      (!originalOrderId || originalOrderId === paymentLink.order_id) &&
+      (!originalPaymentLinkId || originalPaymentLinkId === paymentLink.id);
+
+    bru.setVar("idempotencyReplayMatches", replayMatches);
+    bru.setVar("idempotencyOrderId", originalOrderId || paymentLink.order_id);
+    bru.setVar("idempotencyPaymentLinkId", originalPaymentLinkId || paymentLink.id);
+    bru.setVar("paymentLinkId", paymentLink.id);
+    bru.setVar("checkoutUrl", paymentLink.url);
+    bru.setVar("orderId", paymentLink.order_id);
+  }
+}
+
+tests {
+  const body = res.getBody();
+  const paymentLink = body.payment_link;
+  const relatedOrder = (body.related_resources?.orders || [])[0];
+
+  test("creates the payment link and embedded order", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+    expect(paymentLink).to.be.an("object");
+    expect(paymentLink.id).to.be.a("string").that.is.not.empty;
+    expect(paymentLink.order_id).to.be.a("string").that.is.not.empty;
+    expect(paymentLink.url).to.match(/^https:\/\//);
+  });
+
+  test("uses the configured location and pickup fulfillment", function () {
+    expect(relatedOrder).to.be.an("object");
+    expect(relatedOrder.location_id).to.equal(String(bru.getEnvVar("locationId")));
+    expect(relatedOrder.fulfillments).to.be.an("array").with.lengthOf(1);
+    expect(relatedOrder.fulfillments[0].type).to.equal("PICKUP");
+  });
+
+  test("preserves idempotency when the request is retried", function () {
+    expect(bru.getVar("idempotencyReplayMatches")).to.equal(true);
+  });
+}
+
+docs {
+  The attemptId is generated once per Bruno runtime session and reused on retries.
+  Copy checkoutUrl from Runtime Variables into a browser to complete Sandbox payment.
+}

@@ -1,0 +1,68 @@
+meta {
+  name: Batch Retrieve Inventory Counts
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/v2/inventory/counts/batch-retrieve
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "catalog_object_ids": [
+      "{{variationId}}"
+    ],
+    "location_ids": [
+      "{{locationId}}"
+    ],
+    "states": [
+      "IN_STOCK"
+    ],
+    "limit": 1000
+  }
+}
+
+script:pre-request {
+  for (const name of ["variationId", "locationId", "quantity"]) {
+    const value = String(bru.getEnvVar(name) || "");
+    if (!value || value.startsWith("REPLACE_WITH_")) {
+      throw new Error(`Set ${name} before retrieving inventory.`);
+    }
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body.cursor) {
+    bru.setVar("inventoryCursor", body.cursor);
+  }
+}
+
+tests {
+  const body = res.getBody();
+  const variationId = String(bru.getEnvVar("variationId"));
+  const locationId = String(bru.getEnvVar("locationId"));
+  const requestedQuantity = Number(bru.getEnvVar("quantity"));
+  const count = (body.counts || []).find((entry) =>
+    entry.catalog_object_id === variationId && entry.location_id === locationId
+  );
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+  });
+
+  test("returns enough in-stock inventory", function () {
+    expect(count).to.be.an("object");
+    expect(count.state).to.equal("IN_STOCK");
+    expect(Number(count.quantity)).to.be.at.least(requestedQuantity);
+  });
+}
+
+docs {
+  A missing count or a quantity below the requested quantity should block checkout.
+  If the response contains a cursor, run Batch Retrieve Inventory Counts - Next Page.
+}

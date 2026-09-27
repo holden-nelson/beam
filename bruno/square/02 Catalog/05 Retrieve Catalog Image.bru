@@ -1,0 +1,46 @@
+meta {
+  name: Retrieve Catalog Image
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/v2/catalog/object/{{imageId}}
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  const imageId = String(bru.getEnvVar("imageId") || "");
+
+  if (!imageId || imageId.startsWith("REPLACE_WITH_")) {
+    throw new Error("Set imageId from an item's image_ids list before retrieving its image.");
+  }
+}
+
+tests {
+  const body = res.getBody();
+  const imageId = String(bru.getEnvVar("imageId"));
+  const image = body.object;
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+  });
+
+  test("returns the requested catalog image", function () {
+    expect(image).to.be.an("object");
+    expect(image.id).to.equal(imageId);
+    expect(image.type).to.equal("IMAGE");
+  });
+
+  test("includes a usable image URL", function () {
+    expect(image.image_data).to.be.an("object");
+    expect(image.image_data.url).to.be.a("string").and.match(/^https:\/\//);
+  });
+}
+
+docs {
+  Retrieves the CatalogImage object identified by imageId. Use the returned
+  object.image_data.url to display or download the actual image.
+}

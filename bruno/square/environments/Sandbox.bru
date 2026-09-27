@@ -1,0 +1,27 @@
+vars {
+  @description('Square Sandbox API origin.')
+  baseUrl: https://connect.squareupsandbox.com
+  @description('Pinned Square API version used by every request.')
+  squareVersion: 2026-09-16
+  @description('Active Sandbox salon location ID returned by List Locations.')
+  locationId: L2JG8X9WDSG3E
+  @description('Sandbox category containing items published in the Beam shop.')
+  shopCategoryId: REPLACE_WITH_SANDBOX_SHOP_CATEGORY_ID
+  @description('Sandbox ITEM_VARIATION ID selected from List Catalog.')
+  variationId: REPLACE_WITH_SANDBOX_VARIATION_ID
+  @description('Sandbox IMAGE ID from an item image_ids list.')
+  imageId: REPLACE_WITH_SANDBOX_IMAGE_ID
+  @description('Quantity used by validation and checkout requests.')
+  quantity: 1
+  @description('Public site origin used to build the checkout return URL.')
+  siteUrl: https://example.com
+  @description('Required placeholder name for the pickup fulfillment.')
+  pickupDisplayName: Online Customer
+  @description('ISO 8601 duration used for the ASAP pickup preparation time.')
+  pickupPrepDuration: PT15M
+  @description('Must remain false for normal Sandbox use.')
+  allowProductionWrites: false
+}
+vars:secret [
+  accessToken
+]

@@ -1,0 +1,27 @@
+vars {
+  @description('Square Production API origin.')
+  baseUrl: https://connect.squareup.com
+  @description('Pinned Square API version used by every request.')
+  squareVersion: 2026-09-16
+  @description('Active Production salon location ID returned by List Locations.')
+  locationId: LG3V4VE8FP7T5
+  @description('Production category containing items published in the Beam shop.')
+  shopCategoryId: 6JXGUO73X6GGQAMWTIBYXPU6
+  @description('Production ITEM_VARIATION ID selected from List Catalog.')
+  variationId: REPLACE_WITH_PRODUCTION_VARIATION_ID
+  @description('Production IMAGE ID from an item image_ids list.')
+  imageId: F32NNWUZVR34PEPIQRWYXONL
+  @description('Quantity used by validation and checkout requests.')
+  quantity: 1
+  @description('Public site origin used to build the checkout return URL.')
+  siteUrl: https://example.com
+  @description('Required placeholder name for the pickup fulfillment.')
+  pickupDisplayName: Online Customer
+  @description('ISO 8601 duration used for the ASAP pickup preparation time.')
+  pickupPrepDuration: PT15M
+  @description('Explicit opt-in required before Create Payment Link can write to Production.')
+  allowProductionWrites: false
+}
+vars:secret [
+  accessToken
+]

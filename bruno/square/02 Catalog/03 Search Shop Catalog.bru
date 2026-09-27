@@ -1,0 +1,95 @@
+meta {
+  name: Search Shop Catalog
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/v2/catalog/search-catalog-items
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "product_types": [
+      "REGULAR"
+    ],
+    "category_ids": [
+      "{{shopCategoryId}}"
+    ],
+    "enabled_location_ids": [
+      "{{locationId}}"
+    ],
+    "archived_state": "ARCHIVED_STATE_NOT_ARCHIVED",
+    "sort_order": "ASC",
+    "limit": 100
+  }
+}
+
+script:pre-request {
+  for (const name of ["shopCategoryId", "locationId"]) {
+    const value = String(bru.getEnvVar(name) || "");
+    if (!value || value.startsWith("REPLACE_WITH_")) {
+      throw new Error(`Set ${name} before searching the shop catalog.`);
+    }
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body.cursor) {
+    bru.setVar("catalogSearchCursor", body.cursor);
+  }
+}
+
+tests {
+  const body = res.getBody();
+  const shopCategoryId = String(bru.getEnvVar("shopCategoryId"));
+  const locationId = String(bru.getEnvVar("locationId"));
+  const items = body.items || [];
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(body.errors || []).to.be.an("array").that.is.empty;
+  });
+
+  test("returns shop catalog items", function () {
+    expect(items).to.be.an("array").that.is.not.empty;
+    expect(items.every((item) => item.type === "ITEM")).to.equal(true);
+  });
+
+  test("returns only regular, non-archived items in the shop category", function () {
+    const matches = items.every((item) => {
+      const data = item.item_data || {};
+      const categoryIds = (data.categories || []).map((category) => category.id);
+      const belongsToShop = categoryIds.includes(shopCategoryId) || data.category_id === shopCategoryId;
+
+      return data.product_type === "REGULAR" &&
+        data.is_archived !== true &&
+        item.is_deleted !== true &&
+        belongsToShop;
+    });
+
+    expect(matches).to.equal(true);
+  });
+
+  test("returns only items enabled at the configured location", function () {
+    const matches = items.every((item) => {
+      const absent = (item.absent_at_location_ids || []).includes(locationId);
+      const present = item.present_at_all_locations === true ||
+        (item.present_at_location_ids || []).includes(locationId);
+      return !absent && present;
+    });
+
+    expect(matches).to.equal(true);
+  });
+}
+
+docs {
+  Returns only REGULAR, non-archived items assigned to the configured shop
+  category and enabled at the salon location. Services with product type
+  APPOINTMENTS_SERVICE are excluded.
+
+  If the response contains a cursor, run Search Shop Catalog - Next Page.
+}
