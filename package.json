@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy && printf '\\nDeployment succeeded.\\n\\nRemember to tag the deployed commit (use .0 for the first deploy that day, then .1, .2, and so on):\\n  TAG=YYYY.MM.DD.N\\n  git tag -a \"$TAG\" -m \"Deploy $TAG\"\\n  git push origin \"$TAG\"\\n'"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.2",
