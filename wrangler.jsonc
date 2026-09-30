@@ -11,6 +11,14 @@
 	"observability": {
 		"enabled": true
 	},
+	"vars": {
+		"SQUARE_ENVIRONMENT": "production",
+		"SQUARE_LOCATION_ID": "LG3V4VE8FP7T5",
+		"SQUARE_CATALOG_CATEGORY_ID": "6JXGUO73X6GGQAMWTIBYXPU6"
+	},
+	"secrets": {
+		"required": ["SQUARE_ACCESS_TOKEN"]
+	},
 	"routes": [
 		{
 			"pattern": "beam.hair",

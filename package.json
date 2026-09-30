@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "test": "vitest run",
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
@@ -23,6 +24,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "vitest": "^5.0.2",
     "wrangler": "^4.135.0"
   }
 }

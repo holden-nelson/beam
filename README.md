@@ -25,12 +25,27 @@ npm run dev
 
 The site is available at `http://localhost:4321` by default.
 
+### Square API configuration
+
+The site's backend api integrates with Square as the source of truth for ecommerce.
+
+Copy `.dev.vars.example` to `.dev.vars` and add a Square access
+token with `ITEMS_READ` and `INVENTORY_READ` permissions for local requests. 
+
+Set the deployed production token as a Cloudflare secret:
+
+```sh
+npx wrangler secret put SQUARE_ACCESS_TOKEN
+```
+See [backend-architecture.md](./docs/backend-architecture.md) for more details and api contract.
+
 ## Commands
 
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Start the local development server |
 | `npm run build` | Create a production build in `dist/` |
+| `npm test` | Run unit tests |
 | `npm run preview` | Preview the production build locally |
 | `npm run generate-types` | Generate Cloudflare runtime types |
 | `npm run astro -- --help` | Display Astro CLI help |

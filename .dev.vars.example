@@ -1,0 +1,2 @@
+# Copy to .dev.vars for local development. Never commit the real token.
+SQUARE_ACCESS_TOKEN=replace_with_square_access_token
