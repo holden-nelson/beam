@@ -1,0 +1,11 @@
+headers {
+  Accept: application/json
+}
+
+script:pre-request {
+  const baseUrl = String(bru.getEnvVar("baseUrl") || "").trim();
+
+  if (!baseUrl) {
+    throw new Error("Missing required Bruno environment variable: baseUrl");
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "Beam Backend API",
+  "type": "collection",
+  "defaultEnvironment": "Local"
+}

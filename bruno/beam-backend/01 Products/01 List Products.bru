@@ -1,0 +1,98 @@
+meta {
+  name: List Products
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/products
+  body: none
+  auth: none
+}
+
+tests {
+  const body = res.getBody();
+  const products = body.products || [];
+
+  test("returns a successful response", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("returns the products envelope", function () {
+    expect(body).to.be.an("object");
+    expect(body.products).to.be.an("array");
+  });
+
+  test("returns storefront-safe products", function () {
+    const valid = products.every((product) =>
+      typeof product.id === "string" &&
+      typeof product.name === "string" &&
+      Array.isArray(product.images) &&
+      Array.isArray(product.optionGroups) &&
+      typeof product.defaultVariationId === "string" &&
+      Array.isArray(product.variations) &&
+      product.variations.length > 0
+    );
+
+    expect(valid).to.equal(true);
+  });
+
+  test("returns Square-hosted image metadata, not image data", function () {
+    const valid = products.every((product) =>
+      product.images.every((image) =>
+        typeof image.id === "string" &&
+        typeof image.url === "string" &&
+        image.url.startsWith("https://") &&
+        typeof image.alt === "string" &&
+        image.data === undefined &&
+        image.content === undefined
+      )
+    );
+
+    expect(valid).to.equal(true);
+  });
+
+  test("returns valid option groups and variations", function () {
+    const valid = products.every((product) => {
+      const imageIds = new Set(product.images.map((image) => image.id));
+      const optionValues = new Map(
+        product.optionGroups.map((group) => [
+          group.id,
+          new Set(group.values.map((value) => value.id)),
+        ])
+      );
+
+      const variationsValid = product.variations.every((variation) =>
+        typeof variation.id === "string" &&
+        typeof variation.name === "string" &&
+        Array.isArray(variation.optionValues) &&
+        variation.optionValues.every((value) => optionValues.get(value.optionId)?.has(value.valueId)) &&
+        Number.isSafeInteger(variation.price?.amount) &&
+        variation.price.amount >= 0 &&
+        typeof variation.price.currency === "string" &&
+        typeof variation.available === "boolean" &&
+        Number.isSafeInteger(variation.availableQuantity) &&
+        variation.availableQuantity >= 0 &&
+        Array.isArray(variation.imageIds) &&
+        variation.imageIds.every((imageId) => imageIds.has(imageId))
+      );
+
+      const defaultVariation = product.variations.find(
+        (variation) => variation.id === product.defaultVariationId
+      );
+      const hasAvailableVariation = product.variations.some((variation) => variation.available);
+
+      return variationsValid &&
+        defaultVariation !== undefined &&
+        (!hasAvailableVariation || defaultVariation.available === true);
+    });
+
+    expect(valid).to.equal(true);
+  });
+}
+
+docs {
+  Returns the storefront-safe product catalog for Beam's configured Square
+  category and salon location. Image objects contain Square-hosted URLs only;
+  the endpoint does not proxy image bytes.
+}
