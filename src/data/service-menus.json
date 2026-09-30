@@ -50,8 +50,8 @@
 	},
 	{
 		"id": "cutting",
-		"title": "Cutting",
-		"intro": "Annlyn is not taking new haircut or blowout-only clients at this time.",
+		"title": "Cutting / Styling",
+		"intro": null,
 		"items": [
 			{
 				"name": "BLOWOUT",
